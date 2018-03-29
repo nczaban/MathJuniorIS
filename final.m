@@ -12,18 +12,19 @@ for i=2:(length(result)/2)+1
 end
 clear tmp
 
-pattern = "st";
+pattern = "))((";
 for j=1:length(result)
     for i=1:length(result{j})
-        if contains(result{j}{1:i}, pattern) > 0
-            disp "Found substring"
-%           for k=length(result{j}):-1:i+1
-%               result{j}(1:k+1) = result{j}(1:k);
-%           end
+        str=result{j}{i};
+        if strfind(str, pattern)>1
+            for k=length(result{j}):i+1:-1
+                result{j}{i+1} = result{j}{i};
+            end
+            
         end
-%         result{j(1:i)} = strrep(result{j(1:i)}, '(', '');
-%         result{j(1:i)} = strrep(result{j(1:i)}, ')', '');
+        result{j}{i} = strrep(result{j}{i}, '(', '');
+        result{j}{i} = strrep(result{j}{i}, ')', '');
     end
 end
 
-clear i j
+clear i j k pattern str
