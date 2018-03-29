@@ -14,10 +14,12 @@ clear tmp
 
 for j=1:length(result)
     for i=1:length(result{j})
-        if contains(result{j(1:i)}, '))((')
-           for k=length(result{j}):-1:i+1
-               result{j(1:k+1)} = result{j(1:k)};
-           end
+        pattern = '))((';
+        if strfind(result{j}{1:i}, pattern) > 0
+            disp "Found substring"
+%           for k=length(result{j}):-1:i+1
+%               result{j}(1:k+1) = result{j}(1:k);
+%           end
         end
 %         result{j(1:i)} = strrep(result{j(1:i)}, '(', '');
 %         result{j(1:i)} = strrep(result{j(1:i)}, ')', '');
