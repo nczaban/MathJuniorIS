@@ -12,10 +12,10 @@ for i=2:(length(result)/2)+1
 end
 clear tmp
 
+pattern = "st";
 for j=1:length(result)
     for i=1:length(result{j})
-        pattern = '))((';
-        if strfind(result{j}{1:i}, pattern) > 0
+        if contains(result{j}{1:i}, pattern) > 0
             disp "Found substring"
 %           for k=length(result{j}):-1:i+1
 %               result{j}(1:k+1) = result{j}(1:k);
@@ -25,3 +25,5 @@ for j=1:length(result)
 %         result{j(1:i)} = strrep(result{j(1:i)}, ')', '');
     end
 end
+
+clear i j
