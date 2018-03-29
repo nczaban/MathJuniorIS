@@ -1,0 +1,19 @@
+\documentclass[12pt]{article}
+\usepackage{}
+%%%%%%%%%%%%%%%%%%%%%%%%
+% PREAMBLE
+\usepackage{times}
+\usepackage{setspace}
+\linespread{1.25}
+\usepackage[letterpaper, margin=1in]{geometry}
+\addtolength{\topmargin}{-0.5in}
+
+\begin{document}
+\title{Proposal: Predicting the Ending Notes of Bach Chorales}
+\author{Nicholas Czaban}
+\maketitle
+
+In this project, I aim to create a model to predict the ending notes of Bach chorales. The model will be trained on data provided by University of California, Irvine's Machine Learning Repository. The data set contains the melody lines from 100 chorales, in a Lisp-formatted file. Every note of each chorale contains 6 fields of information: start-time of note, pitch of note, duration of note, key signature of note, time signature of note, and whether or not the note is under a fermata.\\
+
+Bach chorales, as products of the Common Practice Period, follow a fairly well-defined set of rules in their compositions. However, there are enough variations allowable within the rules (as well as opportunities to subvert rules and expectations) to make the creation of a predictive model an interesting problem. Furthermore, the absence of bass, treble, or alto voices in the data set will require some extrapolation in order to create an accurate model. Given the ubiquity of Bach as an example of the period, such a model could provide useful information about the evolution of choral music over the years and track the eventual decline of the Common Practice style. In addition, this model would be able to characterize a composer's works, providing information about which keys and chord progressions they preferred.\\
+\end{document}
