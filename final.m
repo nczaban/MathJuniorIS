@@ -43,12 +43,8 @@ clear i j k pattern str result tmp
 for j=1:100
     i=0;
     k=1;
-    n=true;
-    while n==true
-        k=k+1;
-        if k>length(data)
-            n=false;
-        elseif data(j,k) == "st"
+    while k<=length(data)
+        if data(j,k) == "st"
             i=i+1;
             k=k+1;
             chorale(i,1) = data(j,k);
@@ -63,6 +59,34 @@ for j=1:100
             k=k+2;
             chorale(i,6) = data(j,k);
         end
+        k=k+1;
     end
+    % Create Naive Model - Assumes that every chorale ends on the tonic of
+    % its key
+    chorale=str2double(chorale);
+    N_train = chorale(1:size(chorale,1)-1, :);
+    N_val = chorale(size(chorale,1), :);
+    switch(N_val(4))
+        case 0 % C Major
+            prediction=60;
+        case 1 % G Major
+            prediction=67;
+        case 2 % D Major
+            prediction=62;
+        case 3 % A Major
+            prediction=69;
+        case 4 % E Major
+            prediction=64;
+        case -1 % F Major
+            prediction=65;
+        case -2 % Bb Major
+            prediction=70;
+        case -3 % Eb Major
+            prediction=63;
+        case -4 % Ab Major
+            prediction=68;
+    end
+    
+    clear chorale
 end
-clear n ans i j k
+clear n ans i j k data
