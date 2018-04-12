@@ -160,4 +160,4 @@ end
 z=zeros(100,1);
 confusionmat(results(:,1), z)
 confusionmat(results(:,2), z)
-clear z n ans i j k data tmp
+clear z n ans i j k data
