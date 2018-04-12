@@ -131,21 +131,27 @@ for j=1:100
     end
     if n1==0 && n2==2 || n1==7 && n2==9 || n1==7 && n2==7 || n1==5 && n2==4
         tmp(j,1) = S_results(j,1);
+        tmp(j,2) = n1;
     end
     if n1==5 && n2==2 || n1==8 && n2==9 || n1==8 && n2==8 || n1==5 && n2==5
         tmp(j,1) = S_results(j,1)-1;
+        tmp(j,2) = n1-1;
     end
     if n1==2 && n2==7 || n1==2 && n2==0
         tmp(j,1) = S_results(j,3);
+        tmp(j,2) = n2;
     end
     if n2==11
         tmp(j,1) = S_results(j,3)+1;
+        tmp(j,2) = n2+1;
     end
     if n1==7 && n2==5 || n1==9 && n2==8 || n1==2 && n2==1
         tmp(j,1) = S_results(j,3)-1;
+        tmp(j,2) = n2-1;
     end
     if n1==4 && n2==2 ||  n1==2 && n2==2 || n1==3 && n2==2 || n1==11 && n2==9 || n1==9 && n2==9
         tmp(j,1) = S_results(j,3)-2;
+        tmp(j,2) = n2-2;
     end
     
     if tmp(j,1)-val(2)>0
@@ -155,9 +161,35 @@ for j=1:100
     else
         results(j,2)=-1;
     end
+    if tmp(j,2)==12
+        tmp(j,2)=0;
+    end
+    
+    % Add the actual note position in the key to results matrix
+    switch(val(1,4))
+        case 0 % C Major
+            results(j,3)=mod(val(1,2), 12);
+        case 1 % G Major
+            results(j,3)=mod(val(1,2)-7, 12);
+        case 2 % D Major
+            results(j,3)=mod(val(1,2)-2, 12);
+        case 3 % A Major
+            results(j,3)=mod(val(1,2)-9, 12);
+        case 4 % E Major
+            results(j,3)=mod(val(1,2)-4, 12);
+        case -1 % F Major
+            results(j,3)=mod(val(1,2)-5, 12);
+        case -2 % Bb Major
+            results(j,3)=mod(val(1,2)-10, 12);
+        case -3 % Eb Major
+            results(j,3)=mod(val(1,2)-3, 12);
+        case -4 % Ab Major
+            results(j,3)=mod(val(1,2)-8, 12);
+    end
     clear chorale val train n1 n2
 end
 z=zeros(100,1);
-confusionmat(results(:,1), z)
-confusionmat(results(:,2), z)
+confusionmat(z, results(:,1))
+confusionmat(z, results(:,2))
+confusionmat(results(:,3), tmp(:,2))
 clear z n ans i j k data
