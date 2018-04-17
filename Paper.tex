@@ -1,0 +1,53 @@
+\documentclass[12pt]{article}
+\usepackage{}
+%%%%%%%%%%%%%%%%%%%%%%%%
+% PREAMBLE
+\usepackage{times}
+\usepackage{setspace}
+\linespread{1.25}
+\usepackage[letterpaper, margin=1in]{geometry}
+\addtolength{\topmargin}{-0.5in}
+
+\begin{document}
+\title{Predicting the Ending Notes of Bach Chorales}
+\author{Nicholas Czaban}
+\maketitle
+
+\section{Introduction}
+It is sometimes said that the key difference between computers and humans is a human's artistry, in both creation and enjoyment of the arts. Many studies have attempted to challenge this view, with the development of artificial intelligence that can compose original music. However, this paper will focus on the other perspective of music, that of the listener. With exposure to the vast canon of musical history, humans form their own expectations about the ``rules'' of music; even if someone knows nothing of music theory, they could internally recognize an unresolved note or a dissonant interval. Similarly, this paper will describe a computer model which predicts the ending note of various melodies taken from a set of Bach chorales.
+\section{Computer-Generated Music}
+There have been a number of attempts to create algorithmic composition software, a program which can compose music with little human interaction or involvement; one of the first examples dating to the 1950's when Lejaren Hiller and Leonard Isaacson produced {\it The Illiac Suite for String Quartet} \cite{computers}. There are two varieties of algorithmic composition: top-down and bottom-up; an implementation of the bottom-up approach is covered in detail later.\\
+
+A bottom-up approach tasks the computer with composing a number of distinct passages \cite{computers}. A human then examines the output and stores any phrases that they deem promising. The sections are later combined into a single work, with or without additional input from the computer. The top-down approach involves a composer detailing a computer program which mirrors the composer's specific plan for the composition. Top-down approaches lend themselves less to algorithmic composition, but there are exceptions; most top-down implementations are used as tools in the same sense as a word processor.
+\subsection{A Bottom-Up Approach: Splicing Systems}
+In their attempt to create an bottom-up algorithmic composition model, De Felice et. al. use a technique originally concieved for DNA analysis called a {\it splicing system} to teach a computer to compose original music in the style of Bach \cite{computer_composer}. After converting the chorales into their own tonality degree representation (a notation system that records the voice, pitch, octave, and major/minor tonality of each note), each word is passed into the splicing system. It is in this splicing system that the harmonic function (i.e. the chord progression) and the melodic function (how each note relates to the chord) are developed from the input information. The final model uses a combination of predefined rules of classical music and statistical information extracted from existing data in its compositions.
+\section{Data}
+The data set used to test the models is a collection of one hundred Bach chorales, provided by the University of California Irvine's Machine Learning Repository \cite{data_set}. Each chorale contains only the melody line from each chorale. Each note in the melody has six different information fields. The starting time of the note is measured in 16th notes from the start of the piece. The pitch of the note is provided in the MIDI tuning standard, with the note C4 given a value of 60, C\#4 given a value of 61, etc. The pitches are restricted to values between 60 and 75, by nature of the notes present in the chorales. The duration of each note is given, also measured in 16th notes. The key signature is presented as values between -4 and +4. The numbering relates to the number of sharps or flats are present in the key signature: positive for sharps, negative for flats. The time signature is again measured in the number of 16th notes, this time in the number of 16th notes per measure. Finally, a boolean flag is set to true if the note is underneath a fermata.
+\section{Methods}
+Three separate models were created for this experiment: a naive baseline model, a human-made model with predefined rules, and a computer-generated model.
+\subsection{Baseline Model}
+The baseline model relied on one simple rule: the final note of the melody would be the root of the key in which the chorale began. This model was applied to all the melodies in the data set. Overall, this approach was able to correctly predict the note in 49 of 100 chorales. Of the incorrect predictions, 36 chorales ended on a note below the predicted note and 15 ended on a note above the predicted note.\\
+
+Despite being a baseline model, the near 50\% success rate indicates the relative simplicity of the problem at hand. This model works in a few select cases: either the chorale does not change keys, or the root is included in the new key. Given that key signatures do not contain every note of the octave, the first case is more likely to occur than the second. Thus, these initial results would suggest that there is a common pattern among Bach's choral pieces; that a plurality of his work did not deviate in key.
+\subsection{Human Model}
+To predict the final note, the smart model used the two preceeding notes as reference. Looking at the key signature and the pitch, the model performs modulo operations on the MIDI pitch to find the relative position in the key, with values between 0 and 11. For example, the tonic becomes 0, the major third becomes 4, and the perfect fifth becomes 7. With these values calculated, the model uses a defined set of patterns to predict the melody endings. For the sake of simplicity, only notes in the major triad were used in this model's predictions.\\
+
+This model is intended to mimic how a passive listener might try to predict the ending. The patterns were not directly based on the rules of music theory or the Common Practice period, but instead relied on a combination of what would sound least dissonant to the listener: the nearest note in the triad. For instance, any chorale where the penultimate note was the major seventh predicted the last note to be the root of the key. The same note would be predicted if the model was passed the major third and major second of the key.\\
+
+This model predicted the endings of a total of 56 chorales correctly. While the number of overestimations was reduced by around 60\%, there was a 50\% rise in the number of underestimations. The minimal inprovement of the model would suggest that the patterns created for this model were either incorrect or insufficiently described the musical patterns. In any case, there is much room for improvement for this model.
+\subsection{Computer Model}
+In the final model, each note of the chorale was analyzed separately, then given a probability of that pitch being the same note as the final note. The 70 random chorales from the data set were used as the training set, with the remaining 30 chorales left for testing.
+\section{Conclusion}
+
+\newpage
+\begin{thebibliography}{10}
+\bibitem{computer_composer}
+  De Felice, Clelia, et al. "Splicing music composition." Information Sciences, vol. 385 - 386, 2017, pp. 196-212. OhioLINK Electronic Journal Center, doi:10.1016/J.INS.2017.01.004.
+
+\bibitem{data_set}
+  Dua, D. and Karra Taniskidou, E. (2017). UCI Machine Learning Repository [http://archive.ics.uci.edu/ml]. Irvine, CA: University of California, School of Information and Computer Science.
+
+\bibitem{computers}
+  Miranda, Eduardo R. Composing music with Computers. New York, NY: Routledge, 2014. Safari Books Online, http://0-proquest.safaribooksonline.com.dewey2.library.denison.edu\\/book/audio/9780240515670.
+\end{thebibliography}
+\end{document}
