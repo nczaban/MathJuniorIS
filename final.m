@@ -251,5 +251,5 @@ for i=1:100
     end
 end
 view(T,'Mode', 'Graph')
-computer_model = [over;j;under]
-clear i
+computer_model=[over;j;under]
+clear i j under over P data ans train val computer_model
