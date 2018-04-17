@@ -186,10 +186,70 @@ for j=1:100
         case -4 % Ab Major
             results(j,3)=mod(val(1,2)-8, 12);
     end
+    
+    validation(j,:)=val(2);
     clear chorale val train n1 n2
 end
 z=zeros(100,1);
-confusionmat(z, results(:,1))
-confusionmat(z, results(:,2))
-confusionmat(results(:,3), tmp(:,2))
-clear z n ans i j k data
+%confusionmat(z, results(:,1))
+%confusionmat(z, results(:,2))
+    % Confusion Matrix based on the relative position in the key
+%confusionmat(results(:,3), tmp(:,2))
+clear z n ans i j k
+
+%% Build computer model: For each note in the chorale, calculate the probability of that note being the ending pitch
+for j=1:100
+    k=2;
+    i=1;
+    while k<=length(data)
+        if data(j,k) == "st"
+            k=k+1;
+            chorale(j,i) = data(j,k);
+            k=k+2;
+            i=i+1;
+            chorale(j,i) = data(j,k);
+            k=k+2;
+            i=i+1;
+            chorale(j,i) = data(j,k);
+            k=k+2;
+            i=i+1;
+            chorale(j,i) = data(j,k);
+            k=k+2;
+            i=i+1;
+            chorale(j,i) = data(j,k);
+            k=k+2;
+            i=i+1;
+            chorale(j,i) = data(j,k);
+            i=i+1;
+        elseif j==1
+            chorale=str2double(chorale);
+            break;
+        else
+            break;
+        end
+        k=k+1;
+    end
+end
+clear i j k
+k=randperm(100);
+train=chorale(k(1:70),:);
+val=validation(k(1:70),:);
+T=fitctree(train, val);
+P=predict(T, chorale);
+confusionmat(P, validation)
+clear k
+j=0;
+over=0;
+under=0;
+for i=1:100
+    if P(i)-validation(i)==0
+        j=j+1;
+    elseif P(i)-validation(i)>0
+        over=over+1;
+    else
+        under=under+1;
+    end
+end
+view(T,'Mode', 'Graph')
+computer_model = [over;j;under]
+clear i

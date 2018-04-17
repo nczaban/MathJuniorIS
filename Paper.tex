@@ -44,10 +44,10 @@ To predict the final note, the smart model used the two preceding notes as refer
 
 This model is intended to mimic how a passive listener might try to predict the ending. The patterns were not directly based on the rules of music theory or the Common Practice period, but instead relied on a combination of what would sound least dissonant to the listener: the nearest note in the triad. For instance, any chorale where the penultimate note was the major seventh predicted the last note to be the root of the key. The same note would be predicted if the model was passed the major third and major second of the key.\\
 
-This model predicted the endings of a total of 56 chorales correctly. While the number of over-estimations was reduced by around 60\%, there was a 50\% rise in the number of underestimations. The minimal improvement of the model would suggest that the patterns created for this model were either incorrect or insufficiently described the musical patterns. In any case, there is much room for improvement for this model.
+This model predicted the endings of a total of 56 chorales correctly. While the number of overestimations was reduced by around 60\%, there was a 50\% rise in the number of underestimations. The minimal improvement of the model would suggest that the patterns created for this model were either incorrect or insufficiently described the musical patterns. In any case, there is much room for improvement for this model.
 
 \subsection{Computer Model}
-In the final model, each note of the chorale was analyzed separately, then given a probability of that pitch being the same note as the final note. The 70 random chorales from the data set were used as the training set, with the remaining 30 chorales left for testing.
+In the final model, each chorale was used in a decision tree to predict the final pitch. 70 random chorales from the data set were used as the training set, with the remaining 30 chorales left for testing. This model was able to correctly predict between 62 and 75 of the 100 chorales. 
 
 \section{Conclusion}
 Regardless of the results of the model, the relationship between computers and music continues to provide a challenging roadblock on the path to human-like artificial intelligence. The amount of interdisciplinary cooperation that will eventually be necessary is staggering; from computer scientists and mathematicians to create the models, to musicians for the actual art, to psychologists and philosophers to determine how a computer can best ``learn.'' 
