@@ -190,12 +190,10 @@ for j=1:100
     validation(j,:)=val(2);
     clear chorale val train n1 n2
 end
-z=zeros(100,1);
-%confusionmat(z, results(:,1))
-%confusionmat(z, results(:,2))
-    % Confusion Matrix based on the relative position in the key
-%confusionmat(results(:,3), tmp(:,2))
-clear z n ans i j k
+
+% confusionmat(N_results(:,1), N_results(:,2))
+confusionmat(tmp(:,1), N_results(:,2))
+clear n ans i j k
 
 %% Build computer model: For each note in the chorale, calculate the probability of that note being the ending pitch
 for j=1:100
