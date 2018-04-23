@@ -231,20 +231,45 @@ for j=1:100
     end
 end
 clear i j k
-k=randperm(100);
-train=chorale(k(1:70),:);
-val=validation(k(1:70),:);
+train=chorale(21:100, :);
+val=validation(21:100, :);
 T=fitctree(train, val);
-P=predict(T, chorale);
-confusionmat(P, validation)
-clear k
+P=predict(T, chorale(1:20, :));
+finalResults=P;
+
+train=chorale([1:20 41:100], :);
+val=validation([1:20 41:100], :);
+T=fitctree(train, val);
+P=predict(T, chorale(21:40, :));
+finalResults(21:40, :)=P;
+
+train=chorale([1:40 61:100], :);
+val=validation([1:40 61:100], :);
+T=fitctree(train, val);
+P=predict(T, chorale(41:60, :));
+finalResults(41:60, :)=P;
+
+train=chorale([1:60 81:100], :);
+val=validation([1:60 81:100], :);
+T=fitctree(train, val);
+P=predict(T, chorale(61:80, :));
+finalResults(61:80, :)=P;
+
+train=chorale(1:80, :);
+val=validation(1:80, :);
+T=fitctree(train, val);
+P=predict(T, chorale(81:100, :));
+finalResults(81:100, :)=P;
+
+confusionmat(finalResults, validation)
+clear k val train
 j=0;
 over=0;
 under=0;
 for i=1:100
-    if P(i)-validation(i)==0
+    if finalResults(i)-validation(i)==0
         j=j+1;
-    elseif P(i)-validation(i)>0
+    elseif finalResults(i)-validation(i)>0
         over=over+1;
     else
         under=under+1;
