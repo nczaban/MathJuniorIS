@@ -190,9 +190,11 @@ for j=1:100
     validation(j,:)=val(2);
     clear chorale val train n1 n2
 end
-
+z=zeros(1,100);
+confusionmat(z, results(:,1))
+confusionmat(z, results(:,2))
 % confusionmat(N_results(:,1), N_results(:,2))
-confusionmat(tmp(:,1), N_results(:,2))
+% confusionmat(tmp(:,1), N_results(:,2))
 clear n ans i j k
 
 %% Build computer model: For each note in the chorale, calculate the probability of that note being the ending pitch
@@ -233,46 +235,46 @@ train=chorale(21:100, :);
 val=validation(21:100, :);
 T=fitctree(train, val);
 P=predict(T, chorale(1:20, :));
-finalResults=P;
+finalResults(1:20, 1)=P;
 
 train=chorale([1:20 41:100], :);
 val=validation([1:20 41:100], :);
 T=fitctree(train, val);
 P=predict(T, chorale(21:40, :));
-finalResults(21:40, :)=P;
+finalResults(21:40, 1)=P;
 
 train=chorale([1:40 61:100], :);
 val=validation([1:40 61:100], :);
 T=fitctree(train, val);
 P=predict(T, chorale(41:60, :));
-finalResults(41:60, :)=P;
+finalResults(41:60, 1)=P;
 
 train=chorale([1:60 81:100], :);
 val=validation([1:60 81:100], :);
 T=fitctree(train, val);
 P=predict(T, chorale(61:80, :));
-finalResults(61:80, :)=P;
+finalResults(61:80, 1)=P;
 
 train=chorale(1:80, :);
 val=validation(1:80, :);
 T=fitctree(train, val);
 P=predict(T, chorale(81:100, :));
-finalResults(81:100, :)=P;
+finalResults(81:100, 1)=P;
 
-confusionmat(finalResults, validation)
+% confusionmat(finalResults, validation)
 clear k val train
 j=0;
 over=0;
 under=0;
 for i=1:100
-    if finalResults(i)-validation(i)==0
+    if finalResults(i,1)-validation(i)==0
         j=j+1;
-    elseif finalResults(i)-validation(i)>0
+    elseif finalResults(i,1)-validation(i)>0
         over=over+1;
     else
         under=under+1;
     end
 end
-view(T,'Mode', 'Graph')
-computer_model=[over;j;under]
+% view(T,'Mode', 'Graph')
+computer_model=[under j over]
 clear i j under over P data ans train val computer_model
