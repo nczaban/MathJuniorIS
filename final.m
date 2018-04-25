@@ -236,30 +236,35 @@ val=validation(21:100, :);
 T=fitctree(train, val);
 P=predict(T, chorale(1:20, :));
 finalResults(1:20, 1)=P;
+view(T,'Mode', 'Graph')
 
 train=chorale([1:20 41:100], :);
 val=validation([1:20 41:100], :);
 T=fitctree(train, val);
 P=predict(T, chorale(21:40, :));
 finalResults(21:40, 1)=P;
+% view(T,'Mode', 'Graph')
 
 train=chorale([1:40 61:100], :);
 val=validation([1:40 61:100], :);
 T=fitctree(train, val);
 P=predict(T, chorale(41:60, :));
 finalResults(41:60, 1)=P;
+% view(T,'Mode', 'Graph')
 
 train=chorale([1:60 81:100], :);
 val=validation([1:60 81:100], :);
 T=fitctree(train, val);
 P=predict(T, chorale(61:80, :));
 finalResults(61:80, 1)=P;
+% view(T,'Mode', 'Graph')
 
 train=chorale(1:80, :);
 val=validation(1:80, :);
 T=fitctree(train, val);
 P=predict(T, chorale(81:100, :));
 finalResults(81:100, 1)=P;
+% view(T,'Mode', 'Graph')
 
 % confusionmat(finalResults, validation)
 clear k val train
@@ -275,6 +280,5 @@ for i=1:100
         under=under+1;
     end
 end
-% view(T,'Mode', 'Graph')
 computer_model=[under j over]
 clear i j under over P data ans train val computer_model
