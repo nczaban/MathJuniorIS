@@ -1,5 +1,4 @@
 \documentclass[12pt]{article}
-\usepackage{}
 %%%%%%%%%%%%%%%%%%%%%%%%
 % PREAMBLE
 \usepackage{times}
@@ -34,10 +33,16 @@ The authors determined weights for each possible chord progression based on thei
 The data set used to test the models is a collection of one hundred Bach chorales, provided by the University of California Irvine's Machine Learning Repository \cite{data_set}. Each chorale contains only the melody line from each chorale. Each note in the melody has six different information fields. The starting time of the note is measured in 16th notes from the start of the piece. The pitch of the note is provided in the MIDI tuning standard, with the note C4 given a value of 60, C\#4 given a value of 61, etc. The pitches are restricted to values between 60 and 75, by nature of the notes present in the chorales. The duration of each note is given, also measured in 16th notes. The key signature is presented as values between -4 and +4. The numbering relates to the number of sharps or flats are present in the key signature: positive for sharps, negative for flats. The time signature is again measured in the number of 16th notes, this time in the number of 16th notes per measure. Finally, a Boolean flag is set to true if the note is underneath a fermata.
 
 \section{Methods}
-Three separate models were created for this experiment: a naive baseline model, a human-made model with predefined rules, and a computer-generated model.
+Three separate models were created for this experiment: a naive baseline model, a human-made model with predefined rules, and a computer-generated model built on classification trees. In addition, three variations of the computer model were built. Two used the same structure as the original, but with smaller subsets of the data; the third variation used a k-nearest-neighbors tree.
 
 \subsection{Baseline Model}
-The baseline model relied on one simple rule: the final note of the melody would be the root of the key in which the chorale began. This model was applied to all the melodies in the data set. Overall, this approach was able to correctly predict the note in 49 of 100 chorales. Of the incorrect predictions, 36 chorales ended on a note below the predicted note and 15 ended on a note above the predicted note.\\
+The baseline model relied on one simple rule: the final note of the melody would be the root of the key in which the chorale began. This model was applied to all the melodies in the data set. Overall, this approach was able to correctly predict the note in 49 of 100 chorales. Of the incorrect cases, 36 chorales predicted a note below the actual note and 15 predicted a note above the actual note. This model had a Mean Squared Error (MSE) of 26.94.\\
+
+\begin{figure}[h]
+  \includegraphics[width=13.5cm]{Naive}
+  \centering
+  \caption{A confusion matrix of the naive model. The green region represents overestimates, the blue region represents underestimates.}
+\end{figure}
 
 Despite being a baseline model, the near 50\% success rate indicates the relative simplicity of the problem at hand. This model works in a few select cases: either the chorale does not change keys, or the root is included in the new key. Given that key signatures do not contain every note of the octave, the first case is more likely to occur than the second. Thus, these initial results would suggest that there is a common pattern among Bach's choral pieces; that a plurality of his work did not deviate in key.
 
@@ -46,33 +51,42 @@ To predict the final note, the smart model used the two preceding notes as refer
 
 This model is intended to mimic how a passive listener might try to predict the ending. The patterns were not directly based on the rules of music theory or the Common Practice period, but instead relied on a combination of what would sound least dissonant to the listener: the nearest note in the triad. For instance, any chorale where the penultimate note was the major seventh predicted the last note to be the root of the key. The same note would be predicted if the model was passed the major third and major second of the key.\\
 
-This model predicted the endings of a total of 56 chorales correctly. While the number of overestimations was reduced by around 60\%, there was a 50\% rise in the number of underestimations. The minimal improvement of the model would suggest that the patterns created for this model were either incorrect or insufficiently described the musical patterns. In any case, there is much room for improvement for this model.
+This model predicted the endings of a total of 56 chorales correctly. Despite only a minor increase in correct pitches, the MSE decreased dramatically to 4.32. While the number of underestimations was reduced by around 60\%, there was a 50\% rise in the number of overestimations. This switch may be caused by a number of possibilities. Since the model only selected notes within the major triad, any chorale which ended on a minor third would be missed by the model.
 
 \subsection{Computer Model}
 In the final model, each chorale was used in a decision tree to predict the final pitch. 80 random chorales from the data set were used as the training set, with the remaining 20 chorales left for testing. Five total trees were created, with a different subset of 20 each time; these five trees therby predicted over the entire data set.\\
 
-This model was able to correctly predict 55 of the 100 chorales. 21 chorales were overestimated, and 24 chorales were underestimated. Looking at the various decision trees generated by the model, most trees contained the same node: checking whether the starting key was either A or E major. In some cases, there would be only one solution for chorales which were in A and E major, usually MIDI note 69 (A4). Overall, the most prevalent node checked the starking key signature. After key signature, the most prevalent nodes checked the pitch of the first note. While these covered the majority of the nodes within each tree, there were a number of outlier nodes. For instance, one fairly common outlier was built on the pitch of the 16th or 17th note in the melody line; this note is likely the end of the first phrase of the melody. Other nodes were related to the overall speed of the chorale; one node checked the length of the 15th note, and another checked if the 34th note of the melody was on the 34th beat or later. There may be a pattern apparent in the data, where faster chorales are more likely to end on a particular note than slower chorales.\\
+This model was able to correctly predict 55 of the 100 chorales. 21 chorales were overestimated, and 24 chorales were underestimated, with a MSE of 15.93. Looking at the various decision trees generated by the model, most trees contained the same node: checking whether the starting key was either A or E major. In some cases, there would be only one solution for chorales which were in A and E major, usually MIDI note 69 (A4). Overall, the most prevalent node checked the starking key signature. After key signature, the most prevalent nodes checked the pitch of the first note. While these covered the majority of the nodes within each tree, there were a number of outlier nodes. For instance, one fairly common outlier was built on the pitch of the 16th or 17th note in the melody line; this note is likely the end of the first phrase of the melody. Other nodes were related to the overall speed of the chorale; one node checked the length of the 15th note, and another checked if the 34th note of the melody was on the 34th beat or later. There may be a pattern apparent in the data, where faster chorales are more likely to end on a particular note than slower chorales.\\
+
+Although the human and computer models performed at similar levels, one noticeable difference between the two is accuracy. The confusion matrix for the computer model had fewer rows and columns than the human model. The pitches for the notes were given in a range between 60 and 75 in the MIDI scale, but this range applies to the entire melody line, not the endings. While the human model did not assume any distribution of pitches in the range, the computer model determined that the ending notes are clustered in the middle of the range, thus explaining the shrinkage of the confusion matrix.\\
+
 \begin{figure}[h]
   \includegraphics[width=13.5cm]{Tree5}
   \centering
   \caption{One of the five decision trees generated by the computer model, with the nodes relabeled for readability. This tree was trained on chorales 1 through 80, and tested on chorales 81 through 100.}
 \end{figure}
 
-Although the human and computer models performed at similar levels, one noticeable difference between the two is accuracy. The confusion matrix for the computer model had fewer rows and columns than the human model. The pitches for the notes were given in a range between 60 and 75 in the MIDI scale, but this range applies to the entire melody line, not the endings. While the human model did not assume any distribution of pitches in the range, the computer model determined that the ending notes are clustered in the middle of the range, thus explaining the shrinkage of the confusion matrix.
+A similar process was used with a $k$ nearest neighbors approach, but the results were significantly worse than the classification tree. With $k=1$, only 13 chorales were predicted correctly; increasing the value of $k$ was only able to raise the correct predictions to the mid-20s.\\
 
-A similar process was used with a $k$ nearest neighbors approach, but the results were significantly worse than the classification tree. With $k=1$, only 13 chorales were predicted correctly; increasing the value of $k$ was only able to raise the correct predictions to the mid-20s.
+In an attempt to prune satistically insignificant data, the tree model was run again with the starting time, length, and time signature removed. This variation predicted 54 chorale endings correctly, only one less than the original computer model, and had a MSE of 14.94. However, the split between underestimates and overestimates was worse; 30 chorales were underestimated and 16 were overestimated. Another variation was created with the same fields removed as above, but with an extra caveat that only notes under a fermata were used to predict the endings. This variation was still able to predict 50 chorales correctly, with a similar spread of over- and underestimates as the original computer model: 28 under, 22 over, MSE of 17.36. Clearly, the most useful predictors are found at the ends of musical phrases, but there are still insights to be gained from the other notes.
 \section{Conclusion}
-Although the computer model performed at a similar level to the human model
+Although the computer model performed at a similar level to the human model in total correct, the human model had greater precision on its incorrect guesses than any variation of the computer model. The classification trees that were generated had less to do with actual patterns of notes in the music, and had more in common with the naive model than the human model. Ideally, a computer that truly thought like a human would, in this scenario, look at more than just key signature.\\
+
+Future work in this topic could be done to study the remaining Bach chorales not included in the UCI data set, as well as studying similar works from Bach's contemporaries. This model could be used to measure how similar the works of two different composers are. Similar models could be constructed to look at music of a different style from classical choral compositions. In particular, the 12-bar blues provides a chord structure even more rigid than that of the common practice period, but comes with the improvisation and non-chord tones of jazz \cite{music_dict}. On the other hand, the pentatonic scale - most commonly associated with folk music from Scotland and China - has fewer possible choices for the final note but more ambiguous chord structure \cite{music_dict}.\\
+
 Regardless of the results of the model, the relationship between computers and music continues to provide a challenging roadblock on the path to human-like artificial intelligence. The amount of interdisciplinary cooperation that will eventually be necessary is staggering; from computer scientists and mathematicians to create the models, to musicians for the actual art, to psychologists and philosophers to determine how a computer can best ``learn.'' 
 \newpage
 \begin{thebibliography}{10}
 \bibitem{computer_composer}
-  De Felice, Clelia, et al. "Splicing music composition." Information Sciences, vol. 385 - 386, 2017, pp. 196-212. OhioLINK Electronic Journal Center, doi:10.1016/J.INS.2017.01.004.
+  De Felice, Clelia, et al. ``Splicing music composition.'' Information Sciences, vol. 385 - 386, 2017, pp. 196-212. OhioLINK Electronic Journal Center, doi:10.1016/J.INS.2017.01.004.
 
 \bibitem{data_set}
   Dua, D. and Karra Taniskidou, E. (2017). UCI Machine Learning Repository [http://archive.ics.uci.edu/ml]. Irvine, CA: University of California, School of Information and Computer Science.
 
+\bibitem{music_dict}
+  Kennedy, Michael, and Joyce Bourne Kennedy. ``The Concise Oxford Dictionary of Music.'' Oxford University Press, 5th edition, 2007. 
+  
 \bibitem{computers}
-  Miranda, Eduardo R. Composing music with Computers. New York, NY: Routledge, 2014. Safari Books Online, http://0-proquest.safaribooksonline.com.dewey2.library.denison.edu\\/book/audio/9780240515670.
+  Miranda, Eduardo R. ``Composing music with Computers.'' New York, NY: Routledge, 2014. Safari Books Online, http://0-proquest.safaribooksonline.com.dewey2.library.denison.edu\\/book/audio/9780240515670.
 \end{thebibliography}
 \end{document}

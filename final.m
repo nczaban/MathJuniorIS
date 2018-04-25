@@ -195,6 +195,9 @@ confusionmat(z, results(:,1))
 confusionmat(z, results(:,2))
 % confusionmat(N_results(:,1), N_results(:,2))
 % confusionmat(tmp(:,1), N_results(:,2))
+mse_Naive=sum((N_results(:,1)-N_results(:,2)).^2)/length(N_results)
+mse_Human=sum((tmp(:,1)-N_results(:,2)).^2)/length(tmp)
+
 clear n ans i j k
 
 %% Build computer model: For each note in the chorale, calculate the probability of that note being the ending pitch
@@ -236,7 +239,7 @@ val=validation(21:100, :);
 T=fitctree(train, val);
 P=predict(T, chorale(1:20, :));
 finalResults(1:20, 1)=P;
-view(T,'Mode', 'Graph')
+% view(T,'Mode', 'Graph')
 
 train=chorale([1:20 41:100], :);
 val=validation([1:20 41:100], :);
@@ -281,4 +284,172 @@ for i=1:100
     end
 end
 computer_model=[under j over]
-clear i j under over P data ans train val computer_model
+mse_Computer = sum((finalResults-validation).^2)/length(validation)
+
+clear i j under over P ans train val computer_model
+
+%% Build computer model variant: No starting time, length, or time signature
+clear chorale finalResults N_results results S_results T z tmp
+for j=1:100
+    k=2;
+    i=1;
+    while k<=length(data)
+        if data(j,k) == "st"
+            k=k+1;
+            k=k+2;
+            chorale(j,i) = data(j,k);
+            k=k+2;
+            i=i+1;
+            k=k+2;
+            chorale(j,i) = data(j,k);
+            k=k+2;
+            i=i+1;
+            k=k+2;
+            chorale(j,i) = data(j,k);
+            i=i+1;
+        elseif j==1
+            chorale=str2double(chorale);
+            break;
+        else
+            break;
+        end
+        k=k+1;
+    end
+end
+clear i j k
+train=chorale(21:100, :);
+val=validation(21:100, :);
+T=fitctree(train, val);
+P=predict(T, chorale(1:20, :));
+finalResults(1:20, 1)=P;
+% view(T,'Mode', 'Graph')
+
+train=chorale([1:20 41:100], :);
+val=validation([1:20 41:100], :);
+T=fitctree(train, val);
+P=predict(T, chorale(21:40, :));
+finalResults(21:40, 1)=P;
+% view(T,'Mode', 'Graph')
+
+train=chorale([1:40 61:100], :);
+val=validation([1:40 61:100], :);
+T=fitctree(train, val);
+P=predict(T, chorale(41:60, :));
+finalResults(41:60, 1)=P;
+% view(T,'Mode', 'Graph')
+
+train=chorale([1:60 81:100], :);
+val=validation([1:60 81:100], :);
+T=fitctree(train, val);
+P=predict(T, chorale(61:80, :));
+finalResults(61:80, 1)=P;
+% view(T,'Mode', 'Graph')
+
+train=chorale(1:80, :);
+val=validation(1:80, :);
+T=fitctree(train, val);
+P=predict(T, chorale(81:100, :));
+finalResults(81:100, 1)=P;
+% view(T,'Mode', 'Graph')
+
+% confusionmat(finalResults, validation)
+clear k val train
+j=0;
+over=0;
+under=0;
+for i=1:100
+    if finalResults(i,1)-validation(i)==0
+        j=j+1;
+    elseif finalResults(i,1)-validation(i)>0
+        over=over+1;
+    else
+        under=under+1;
+    end
+end
+computer_model=[under j over]
+mse_ComputerNoTime = sum((finalResults-validation).^2)/length(validation)
+clear i j under over P ans train val computer_model
+
+%% Build computer model variant: No starting time, length, or time singature, fermata notes only
+clear chorale finalResults N_results results S_results T z tmp
+for j=1:100
+    k=2;
+    i=1;
+    while k<=length(data)
+        if data(j,k) == "st"
+            k=k+3;
+            tmp(1,1) = data(j,k);
+            k=k+4;
+            tmp(1,2) = data(j,k);
+            k=k+4;
+            tmp(1,3) = data(j,k);
+            if tmp(1,3)=="1"
+                chorale(j,i)=tmp(1,1);
+                i=i+1;
+                chorale(j,i)=tmp(1,2);
+                i=i+1;
+                chorale(j,i)=tmp(1,3);
+                i=i+1;
+            end
+        elseif j==1
+            chorale=str2double(chorale);
+            break;
+        else
+            break;
+        end
+        k=k+1;
+    end
+end
+clear i j k
+train=chorale(21:100, :);
+val=validation(21:100, :);
+T=fitctree(train, val);
+P=predict(T, chorale(1:20, :));
+finalResults(1:20, 1)=P;
+% view(T,'Mode', 'Graph')
+
+train=chorale([1:20 41:100], :);
+val=validation([1:20 41:100], :);
+T=fitctree(train, val);
+P=predict(T, chorale(21:40, :));
+finalResults(21:40, 1)=P;
+% view(T,'Mode', 'Graph')
+
+train=chorale([1:40 61:100], :);
+val=validation([1:40 61:100], :);
+T=fitctree(train, val);
+P=predict(T, chorale(41:60, :));
+finalResults(41:60, 1)=P;
+% view(T,'Mode', 'Graph')
+
+train=chorale([1:60 81:100], :);
+val=validation([1:60 81:100], :);
+T=fitctree(train, val);
+P=predict(T, chorale(61:80, :));
+finalResults(61:80, 1)=P;
+% view(T,'Mode', 'Graph')
+
+train=chorale(1:80, :);
+val=validation(1:80, :);
+T=fitctree(train, val);
+P=predict(T, chorale(81:100, :));
+finalResults(81:100, 1)=P;
+% view(T,'Mode', 'Graph')
+
+% confusionmat(finalResults, validation)
+clear k val train
+j=0;
+over=0;
+under=0;
+for i=1:100
+    if finalResults(i,1)-validation(i)==0
+        j=j+1;
+    elseif finalResults(i,1)-validation(i)>0
+        over=over+1;
+    else
+        under=under+1;
+    end
+end
+% computer_model=[under j over]
+mse_ComputerFermata = sum((finalResults-validation).^2)/length(validation)
+clear i j under over P ans train val computer_model
